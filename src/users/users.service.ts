@@ -16,4 +16,8 @@ export class UsersService {
         return await this.userRepository.validateUser(email, password)
     }
 
+    async findUserById(id: string): Promise<User> {
+        return await this.userRepository.findOneBy({ id: id })
+    }
+
 }

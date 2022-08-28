@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { refreshTokenConfig } from 'src/config/jwt.config';
 import { User } from 'src/users/entity/user.entity';
@@ -77,6 +77,17 @@ export class AuthService {
                 throw new InternalServerErrorException('Failed to decode token')
             }
         }
+    }
+
+    async revokeRefreshToken(id: string): Promise<void> {
+        const refreshToken = await this.refreshTokenRepository.findOneBy({ id: id })
+
+        if (!refreshToken) {
+            throw new NotFoundException('refresh token is not found')
+        }
+
+        refreshToken.isRevoked = true
+        await refreshToken.save()
     }
 
 }
